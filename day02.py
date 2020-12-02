@@ -31,8 +31,4 @@ if __name__ == "__main__":
     with open(FILEPATH, 'r') as fp:
         csv_reader = csv.reader(fp, delimiter=":")
         count = 0
-        for row in csv_reader:
-            if is_policy02_valid(row):
-                count += 1
-
-    print(count)
+        print(len([row for row in csv_reader if is_policy02_valid(row)]))
