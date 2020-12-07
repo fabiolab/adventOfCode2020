@@ -1,16 +1,49 @@
-FILEPATH = "data/day05-1_input.txt"
+from typing import List
+
+FILEPATH = "data/day07-1_input.txt"
 
 
-def decode_board_pass(a_board_pass: str) -> int:
-    # Hint: that's all about binary encoding! It's like searching into a binary tree
-    row = int(a_board_pass[:7].replace('F', '0').replace('B', '1'), 2)
-    col = int(a_board_pass[7:].replace('L', '0').replace('R', '1'), 2)
-    return row * 8 + col
+def decode_rule(rule: str) -> dict:
+    contains = rule.split(" contain ")[0].replace(' bags', '')
+    bags = [(bag.split(' ')[0].replace('no', '0'), " ".join(bag.split(' ')[1:]))
+            for bag in
+            rule.split(" contain ")[1].replace('.', '').replace(' bags', '').replace(' bag', '').split(', ')]
+
+    return {contains: bags}
 
 
-board_passes = [line.strip() for line in open(FILEPATH, 'r').readlines()]
-booked_seats = sorted([decode_board_pass(bp) for bp in board_passes])
-free_seats = [seat for seat, seat_next in zip(booked_seats, booked_seats[1:] + [booked_seats[0]]) if
-              seat + 1 != seat_next and seat != max(booked_seats)]
-print(max(booked_seats))
-print(free_seats)
+def get_contained(contains: dict) -> dict:
+    my_inverted_dict = dict()
+    for key, value in contains.items():
+        for item in value:
+            my_inverted_dict.setdefault(item[1], list()).append(key)
+    return my_inverted_dict
+
+
+def get_contains(a_rules: List[str]) -> dict:
+    out_in = {}
+    for rule in a_rules:
+        oi = decode_rule(rule)
+        out_in.update(oi)
+    return out_in
+
+
+def get_all_contains(contained: dict, bag: str) -> list:
+    if not bag:
+        return []
+    return contained.get(bag, []) + [item for b in contained.get(bag, []) for item in get_all_contains(contained, b)]
+
+
+def count_all_contained(contains: dict, bag: str) -> int:
+    if not bag:
+        return 0
+    current = sum([int(tuples[0]) for tuples in contains.get(bag, [('0', '')])])
+    deep = [int(tuples[0]) * count_all_contained(contains, tuples[1]) for tuples in contains.get(bag, [(0, '')])]
+    return current + sum(deep)
+
+
+rules = [line.strip() for line in open(FILEPATH, 'r').readlines()]
+contains = get_contains(rules)
+contained = get_contained(contains)
+print(len(set(get_all_contains(contained, 'shiny gold'))))
+print(count_all_contained(contains, 'shiny gold'))
