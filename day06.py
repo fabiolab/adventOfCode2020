@@ -17,4 +17,5 @@ def get_yes_answers_every(group_answers: list) -> list:
 
 the_group_answers = [line.replace('\n', ' ').split(' ') for line in open(FILEPATH, 'r').read().split('\n\n')]
 print(sum(get_yes_answers_any(the_group_answers)))
+print(get_yes_answers_every(the_group_answers))
 print(sum(get_yes_answers_every(the_group_answers)))
