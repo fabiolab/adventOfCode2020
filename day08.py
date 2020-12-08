@@ -1,5 +1,4 @@
 FILEPATH = "data/day08-1_input.txt"
-# FILEPATH = "data/fake.txt"
 
 MOVES = {
     'jmp': lambda position, param: (position + param, 0),
@@ -28,21 +27,8 @@ def run_code(a_code: list) -> int:
 
 def run_instruction_at(a_code: list, position: int) -> (int, int):
     current_instruction, current_value = a_code[position]
-    # print(
-    #     f"{position};{current_instruction};{current_value};{MOVES[current_instruction](position, current_value)[1]};{MOVES[current_instruction](position, current_value)[0]}")
     return MOVES[current_instruction](position, current_value)
 
-
-# def mute_code(a_program: list) -> list:
-#     is_variation = False
-#     for index, (instruction, value) in enumerate(a_program):
-#         if instruction in ('jmp', 'nop'):
-#             is_variation = True
-#             for variations in mute_code(a_program[index + 1:]):
-#                 yield a_program[:index + 1] + variations
-#                 yield a_program[:index] + [(FIXES[instruction], value)] + variations
-#     if not is_variation:
-#         yield a_program
 
 def mute_code(a_program: list) -> list:
     for index, (instruction, value) in enumerate(a_program):
